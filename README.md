@@ -1,59 +1,325 @@
 # PlanForm.AI
-PlanForm.AI is a structural intelligence platform that takes a floor plan image and turns it into something you can actually work with. Upload a blueprint, and the system figures out the walls, rooms, doors, and windows, builds a 3D model from that data, recommends construction materials, and explains the reasoning behind every suggestion. The whole thing runs through a pipeline that combines computer vision, graph analysis, and a language model working together in sequence.
-## Repository structure
 
-- `client/` — React + Vite frontend
-- `server/` — Node.js (Express) API server
-- `cv-service/` — Python FastAPI service (computer vision utilities)
-- `smart-contract/` — smart contract work (project folder)
-- `data/` — local data files used by the project
-- `deploy-contract.sh`, `deploy-contract.ps1` — helper scripts for contract deployment
-- `package.json` — root dependencies (Stellar SDK tooling)
+**PlanForm.AI** is an AI-powered structural intelligence platform that transforms static floor plan images into **interactive architectural insights**.
 
-## Tech stack (high level)
+Upload a blueprint and the system automatically:
 
-- Frontend: React (Vite), Tailwind, Three.js (@react-three/fiber, drei), Framer Motion
-- Backend: Node.js, Express, Multer, Groq SDK, Axios
-- CV service: FastAPI + Uvicorn, OpenCV, NumPy, Pillow, scikit-image
-- Wallet/chain: Freighter API + Stellar SDK (in root + client dependencies)
+- Detects **walls, rooms, doors, and windows**
+- Converts the plan into a **structured spatial graph**
+- Generates a **3D model**
+- Recommends **construction materials**
+- Explains the reasoning behind every recommendation using **AI**
 
-## Getting started
+The platform combines **Computer Vision, Graph Analysis, and Large Language Models** into a single intelligent pipeline.
 
-- ### Prerequisites
+---
 
-- Node.js (recommended: current LTS)
-- Python 3.10+ (recommended)
-- pip (or a virtual environment tool of your choice)
+# Key Capabilities
 
-## Features
- 
-### Floor Plan Parsing
- 
-The computer vision service processes uploaded floor plan images using OpenCV. It separates thick wall lines from thin annotation lines, runs Hough line detection on the wall layer, merges parallel edge pairs into single centerlines, and snaps wall endpoints together at junctions.
- 
-### Door and Window Detection
- 
-Doors are detected by looking for quarter-circle arc shapes in the thin annotation layer. Windows are detected from parallel line pairs or hollow rectangular contours. Both are then matched against wall gaps to confirm their positions.
- 
-### Graph-Based Spatial Reasoning
- 
-Wall segments are converted into a graph where nodes are wall endpoints and edges carry wall metadata including a stable wall ID. Gap detection runs over this graph to find collinear segments with openings between them.
- 
-### 3D Model Viewer
- 
-The parsed layout feeds directly into a Three.js scene rendered inside the browser. Walls are extruded to height, doors are shown as transparent gaps with a door leaf, and windows are rendered with a translucent glass panel.
- 
-### Material Recommendations
- 
-A scoring system evaluates every material in a catalog of roughly a hundred options against the structural requirements of each wall segment. The span of each segment determines whether it is a partition wall, load-bearing wall, long span, or beam.
- 
-### AI Explanation and Chat
- 
-After analysis, the system sends the recommendations to Groq and asks for a plain-language explanation covering the project summary, element-by-element reasoning, and key tradeoffs. A floating chat widget lets you ask follow-up questions about the plan.
- 
-### Blockchain Registry
- 
-Results can be stored on the Stellar testnet through a Soroban smart contract. Connecting a Freighter wallet lets you register a blueprint with a hashed record of the materials, room count, area, and cost estimate.
-### Coordinate Overlay
- 
-The CV service generates an annotated version of the uploaded image with wall endpoint coordinates marked directly on the plan. This is saved alongside the original and shown in the layout viewer as an alternative view, which makes it easier to cross-reference the 3D model with the original drawing.
+## 1. Floor Plan Parsing
+
+The computer vision service processes uploaded floor plan images using **OpenCV**.
+
+Steps include:
+
+1. Separating **thick wall lines** from **thin annotation lines**
+2. Running **Hough Line Detection** to identify wall edges
+3. Merging parallel edges into **centerline walls**
+4. Snapping endpoints to build **clean junctions**
+
+This converts a noisy blueprint into structured wall geometry.
+
+---
+
+## 2. Door and Window Detection
+
+PlanForm identifies openings through pattern recognition.
+
+### Doors
+- Detected using **quarter-circle arc patterns**
+- Matched with wall openings
+
+### Windows
+- Detected via **parallel line pairs**
+- Hollow rectangular contours
+
+All detected openings are validated against wall gaps to ensure accurate placement.
+
+---
+
+## 3. Graph-Based Spatial Reasoning
+
+Once walls are detected, they are converted into a **spatial graph**.
+
+- **Nodes:** wall endpoints
+- **Edges:** wall segments
+
+Each edge contains metadata like:
+
+- Wall ID
+- Orientation
+- Length
+- Adjacency
+
+This graph enables:
+
+- Gap detection
+- Room inference
+- Structural reasoning
+
+---
+
+## 4. Interactive 3D Model Viewer
+
+The parsed layout is rendered in the browser using **Three.js**.
+
+The viewer generates:
+
+- **Extruded walls**
+- **Transparent door gaps**
+- **Glass window panels**
+
+Users can rotate, zoom, and inspect the model interactively.
+
+---
+
+## 5. Material Recommendation Engine
+
+PlanForm evaluates a catalog of **100+ construction materials**.
+
+Each wall segment is classified based on **structural span**:
+
+- Partition wall
+- Load-bearing wall
+- Long span
+- Beam support
+
+A scoring system ranks materials using criteria such as:
+
+- Structural strength
+- Cost efficiency
+- Suitability for span
+- Durability
+
+---
+
+## 6. AI Explanation and Chat
+
+After analysis, the system sends structured results to **Groq's LLM API**.
+
+The AI generates:
+
+- Project summary
+- Element-by-element reasoning
+- Material tradeoffs
+- Construction insights
+
+A **floating chat assistant** allows users to ask follow-up questions such as:
+
+- "Why did you choose reinforced concrete for this wall?"
+- "What happens if I increase the span?"
+
+---
+
+## 7. Blockchain Blueprint Registry
+
+PlanForm allows architectural results to be **registered on-chain**.
+
+Using the **Stellar testnet** and **Soroban smart contracts**, the system stores a hashed record of:
+
+- Material recommendations
+- Room count
+- Estimated area
+- Cost estimates
+
+Users can connect their **Freighter wallet** to register a blueprint.
+
+This creates a **tamper-proof structural record**.
+
+---
+
+## 8. Coordinate Overlay Visualization
+
+The CV service generates an **annotated version of the blueprint**.
+
+This overlay shows:
+
+- Wall endpoint coordinates
+- Junction points
+- Spatial references
+
+The annotated version appears in the **layout viewer**, helping users cross-reference the **2D blueprint and 3D model**.
+
+---
+
+# System Architecture
+
+```
+            Upload Floor Plan
+                    │
+                    ▼
+            Node.js API Server
+                    │
+        ┌───────────┴───────────┐
+        ▼                       ▼
+Computer Vision Service    AI Reasoning
+   (FastAPI + OpenCV)      (Groq LLM)
+        │                       │
+        ▼                       ▼
+  Spatial Graph          Material Analysis
+        │
+        ▼
+  3D Model Generation
+        │
+        ▼
+  React + Three.js Viewer
+        │
+        ▼
+ Blockchain Registry (Stellar)
+```
+
+---
+
+# Repository Structure
+
+```
+PlanForm.AI
+│
+├── client/               React + Vite frontend
+├── server/               Node.js Express API
+├── cv-service/           Python FastAPI computer vision service
+├── smart-contract/       Soroban smart contract code
+├── data/                 Local data files
+│
+├── deploy-contract.sh    Contract deployment script (Linux/macOS)
+├── deploy-contract.ps1   Contract deployment script (Windows)
+│
+└── package.json          Root dependencies
+```
+
+---
+
+# Tech Stack
+
+## Frontend
+
+- React (Vite)
+- Tailwind CSS
+- Three.js
+- React Three Fiber
+- Drei
+- Framer Motion
+
+## Backend
+
+- Node.js
+- Express
+- Multer
+- Axios
+- Groq SDK
+
+## Computer Vision Service
+
+- FastAPI
+- Uvicorn
+- OpenCV
+- NumPy
+- Pillow
+- scikit-image
+
+## Blockchain
+
+- Stellar SDK
+- Soroban Smart Contracts
+- Freighter Wallet
+
+---
+
+# Getting Started
+
+## Prerequisites
+
+Make sure you have installed:
+
+- **Node.js (LTS recommended)**
+- **Python 3.10+**
+- **pip**
+
+---
+
+## Installation
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/yourusername/planform-ai.git
+cd planform-ai
+```
+
+### 2. Install dependencies
+
+```bash
+npm install
+```
+
+### 3. Setup the CV service
+
+```bash
+cd cv-service
+pip install -r requirements.txt
+```
+
+---
+
+## Running the Project
+
+### Start backend
+
+```bash
+cd server
+npm run dev
+```
+
+### Start frontend
+
+```bash
+cd client
+npm run dev
+```
+
+### Start CV service
+
+```bash
+uvicorn main:app --reload
+```
+
+---
+
+# Future Improvements
+
+Planned enhancements include:
+
+- Handling **hand-drawn floor plans**
+- Detecting **non-orthogonal walls**
+- Integrating **real-time construction material pricing**
+- Automatic **room classification**
+- Structural **load simulation**
+- Exporting models to **CAD / BIM formats**
+
+---
+
+# Use Cases
+
+PlanForm can be used by:
+
+- Architects
+- Civil engineers
+- Real estate developers
+- Construction planners
+- Architecture students
+
+---
+
+# License
+
+MIT License
