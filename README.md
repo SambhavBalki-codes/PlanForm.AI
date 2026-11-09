@@ -1,237 +1,355 @@
-# PlanForm.AI
+# PlanForm.AI 🏗️
+### Transforming 2D Floor Plans into Intelligent Structural Insights
 
-**PlanForm.AI** is a structural intelligence platform that transforms floor plan images into actionable engineering insights. Upload a blueprint — the system detects walls, rooms, doors, and windows; constructs a 3D model; recommends construction materials; and delivers AI-generated explanations for every decision. Results can optionally be registered on the Stellar blockchain for immutable record-keeping.
+**PlanForm.AI** is an AI-powered structural intelligence platform that transforms architectural floor plan images into actionable engineering insights. By combining Computer Vision, Graph-Based Spatial Reasoning, 3D Visualization, AI-driven recommendations, and Blockchain technology, it bridges the gap between architectural blueprints and structural decision-making.
 
----
+Upload a floor plan and let PlanForm.AI automatically detect walls, rooms, doors, and windows, reconstruct an interactive 3D representation, recommend suitable construction materials, and explain the engineering rationale behind every recommendation.
 
-## Table of Contents
-
-- [Features](#features)
-- [Architecture](#architecture)
-- [Tech Stack](#tech-stack)
-- [Project Structure](#project-structure)
-- [Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Installation](#installation)
-  - [Running the Services](#running-the-services)
-- [Environment Variables](#environment-variables)
-- [Pipeline Overview](#pipeline-overview)
-- [Blockchain Integration](#blockchain-integration)
-- [Smart Contract Deployment](#smart-contract-deployment)
-- [API Reference](#api-reference)
+For transparent and immutable record-keeping, analysis results can also be registered on the **Stellar Blockchain**.
 
 ---
 
-## Features
+## 🎥 Project Demo
 
-| Feature                           | Description                                                                                         |
-| --------------------------------- | --------------------------------------------------------------------------------------------------- |
-| **Floor Plan Parsing**            | OpenCV-based wall extraction, door/window detection, and coordinate overlay generation              |
-| **Graph-Based Spatial Reasoning** | Wall segments modelled as a graph; gap detection finds openings between collinear segments          |
-| **3D Model Viewer**               | Interactive Three.js scene with extruded walls, door leaves, window panels, and per-wall labels     |
-| **Material Recommendations**      | Scoring engine evaluates ~100 materials against span, load type, cost, strength, and durability     |
-| **AI Explanation & Chat**         | Groq LLM generates plain-English project summaries and answers follow-up questions in a chat widget |
-| **Blockchain Registry**           | Soroban smart contract on Stellar Testnet stores a hashed record of every analysis                  |
-| **Coordinate Overlay**            | Annotated image with wall endpoints marked, saved alongside the original for cross-referencing      |
+**Watch PlanForm.AI in Action**
+
+[▶️ Watch the Project Demo](https://lnkd.in/p/dkbwS-jU)
+
+Explore the complete workflow, from blueprint upload and structural analysis to 3D visualization, material recommendations, and blockchain registration.
 
 ---
 
-## Architecture
+## ✨ Key Features
 
+| Feature | Description |
+|---|---|
+| **Intelligent Floor Plan Parsing** | OpenCV-powered detection of walls, rooms, doors, and windows from architectural blueprints. |
+| **Graph-Based Spatial Reasoning** | Models wall segments as a graph and identifies structural openings through geometric gap analysis. |
+| **Interactive 3D Reconstruction** | Converts detected floor plans into interactive Three.js models featuring extruded walls, door leaves, window panels, and wall labels. |
+| **AI-Powered Material Recommendations** | Evaluates approximately 100 construction materials using cost, strength, durability, span, and thermal efficiency. |
+| **Explainable AI Insights** | Uses Groq-powered LLMs to generate engineering explanations, material selection rationale, and structural trade-offs. |
+| **AI Engineering Assistant** | Enables users to ask follow-up questions about structural elements, material choices, and analysis results. |
+| **Stellar Blockchain Registry** | Registers immutable analysis records on the Stellar Testnet using Soroban smart contracts. |
+| **Coordinate Overlay Generation** | Produces annotated blueprint images with detected wall endpoints for visual verification and cross-referencing. |
+
+---
+
+## 🏛️ System Architecture
+
+PlanForm.AI follows a modular architecture consisting of a React frontend, Node.js orchestration layer, and an independent Python Computer Vision service.
+
+```text
+                   ┌──────────────────────────┐
+                   │       React + Vite       │
+                   │       Frontend           │
+                   └────────────┬─────────────┘
+                                │
+                         REST API Requests
+                                │
+                                ▼
+                   ┌──────────────────────────┐
+                   │    Node.js + Express     │
+                   │                          │
+                   │  • File Upload (Multer)  │
+                   │  • Pipeline Orchestration│
+                   │  • Structural Classifier │
+                   │  • Material Scoring      │
+                   └──────┬───────────┬───────┘
+                          │           │
+                 HTTP     │           │ Groq API
+                          ▼           ▼
+              ┌────────────────┐  ┌──────────────┐
+              │ Python FastAPI │  │  Groq LLM    │
+              │  CV Service    │  │              │
+              │                │  │ AI Insights  │
+              │ • OpenCV       │  │ Explanations │
+              │ • Wall Detection│  │ Chat         │
+              │ • Symbol       │  └──────────────┘
+              │   Recognition  │
+              │ • Graph Analysis│
+              │ • Coordinates  │
+              └───────┬────────┘
+                      │
+                 Analysis Results
+                      │
+                      ▼
+              ┌────────────────┐
+              │ React Results  │
+              │                │
+              │ • Layout Viewer│
+              │ • 3D Model     │
+              │ • Material     │
+              │   Recommendations
+              │ • AI Insights  │
+              └───────┬────────┘
+                      │
+                      ▼
+              ┌────────────────┐
+              │ Stellar Testnet│
+              │ Soroban        │
+              │ Smart Contract │
+              └────────────────┘
 ```
-Browser (React + Vite)
-        │
-        │  REST (multipart / JSON)
-        ▼
-Node.js / Express  ──────────────────────────────┐
-  • Multer file upload                            │
-  • Structural classifier                         │  Groq API
-  • Material scoring engine          ─────────────┘  (LLM)
-        │
-        │  HTTP (multipart)
-        ▼
-Python / FastAPI  (cv-service)
-  • OpenCV wall detection
-  • Door / window symbol recognition
-  • Graph gap analysis
-  • Coordinate overlay image
-        │
-        │  (results returned to Node)
-        ▼
-Browser renders:
-  LayoutViewer · ModelViewer · MaterialPanel
-  TradeOff · ExplanationPanel · ChatbotWidget
-  BlueprintRegistry (Stellar / Freighter)
-```
 
 ---
 
-## Tech Stack
+## 🛠️ Technology Stack
 
-**Frontend**
+### Frontend
+- **React 19** – Component-based user interface.
+- **Vite 8** – Frontend development and build tooling.
+- **Tailwind CSS** – Utility-first styling.
+- **Three.js** – 3D rendering and visualization.
+- **React Three Fiber & Drei** – Declarative 3D scene development.
+- **Framer Motion** – UI animations and transitions.
+- **Stellar SDK & Freighter API** – Blockchain wallet integration.
 
-- React 19, Vite 8, Tailwind CSS
-- Three.js via `@react-three/fiber` + `@react-three/drei`
-- Framer Motion, React Parallax Tilt
-- Stellar SDK + Freighter API
+### Backend
+- **Node.js & Express 5** – REST API and pipeline orchestration.
+- **Multer** – Multipart image upload handling.
+- **Axios** – HTTP communication between services.
+- **Groq SDK** – LLM-powered explanations and conversational AI.
 
-**Backend (Node.js)**
+### Computer Vision & Processing
+- **Python 3.10+**
+- **FastAPI & Uvicorn**
+- **OpenCV** – Image processing and geometric feature detection.
+- **NumPy** – Numerical and coordinate operations.
+- **Pillow** – Image manipulation.
+- **scikit-image** – Image processing utilities.
 
-- Express 5, Multer
-- Groq SDK (`llama-3.3-70b-versatile` with `llama3-8b-8192` fallback)
-- Axios
-
-**CV Service (Python)**
-
-- FastAPI + Uvicorn
-- OpenCV, NumPy, Pillow, scikit-image
-
-**Blockchain**
-
-- Stellar Testnet, Soroban smart contracts (Rust)
-- Freighter browser wallet
+### Blockchain
+- **Stellar Testnet** – Blockchain network.
+- **Soroban** – Smart contract platform.
+- **Rust** – Smart contract development.
+- **Freighter** – Browser-based Stellar wallet.
 
 ---
 
-## Project Structure
+## 📂 Project Structure
 
-```
+```text
 PlanForm.AI/
-├── client/                  # React + Vite frontend
+│
+├── client/                         # React + Vite frontend
 │   └── src/
-│       ├── components/      # LayoutViewer, ModelViewer, MaterialPanel, etc.
-│       ├── pages/           # HomePage, UploadPage, ResultsPage, AboutUs
-│       └── services/        # api.js, stellar.js
-├── server/                  # Node.js Express API
-│   ├── controllers/         # pipelineController.js
-│   ├── services/            # aiService.js, cvService.js, materialService.js
-│   ├── utils/               # scoring.js, structureClassifier.js
-│   └── config/              # multer.js, config.js
-├── cv-service/              # Python FastAPI CV service
-│   ├── app.py
+│       ├── components/             # UI and visualization components
+│       ├── pages/                  # Application pages
+│       └── services/               # API and Stellar integration
+│
+├── server/                         # Node.js + Express backend
+│   ├── controllers/                # Request controllers
+│   ├── services/                   # Core application services
+│   ├── utils/                      # Scoring and classification logic
+│   └── config/                     # Application configuration
+│
+├── cv-service/                     # Python Computer Vision service
+│   ├── app.py                      # FastAPI application
 │   └── parser/
-│       ├── preprocess.py    # Full CV pipeline
-│       └── graph_utils.py   # Wall graph + opening detection
-├── smart-contract/          # Soroban / Rust smart contract
-│   └── contracts/blueprint_registry/src/lib.rs
+│       ├── preprocess.py           # Floor plan processing pipeline
+│       └── graph_utils.py          # Wall graph and opening detection
+│
+├── smart-contract/                 # Soroban smart contracts
+│   └── contracts/
+│       └── blueprint_registry/
+│           └── src/lib.rs
+│
 ├── data/
-│   └── materials.json       # ~100-entry material catalog
-├── deploy-contract.sh       # Linux/macOS deployment script
-└── deploy-contract.ps1      # Windows deployment script
+│   └── materials.json              # Construction material catalog
+│
+├── deploy-contract.sh              # Linux/macOS deployment script
+└── deploy-contract.ps1             # Windows deployment script
 ```
 
 ---
 
-## Getting Started
+## 🚀 Getting Started
 
 ### Prerequisites
 
-| Tool         | Version                                       |
-| ------------ | --------------------------------------------- |
-| Node.js      | LTS (≥ 20)                                    |
-| Python       | 3.10+                                         |
-| pip          | Latest                                        |
-| Rust + Cargo | Latest stable                                 |
-| Stellar CLI  | Latest (`cargo install --locked stellar-cli`) |
+Ensure the following tools are installed:
 
-### Installation
+| Technology | Requirement |
+|---|---|
+| Node.js | LTS (20 or higher) |
+| npm | Latest stable |
+| Python | 3.10 or higher |
+| pip | Latest stable |
+| Rust & Cargo | Latest stable |
+| Stellar CLI | Latest stable |
 
-**1. Clone the repo**
+Install the Stellar CLI:
+
+```bash
+cargo install --locked stellar-cli
+```
+
+### 1. Clone the Repository
 
 ```bash
 git clone https://github.com/your-org/planform-ai.git
-cd planform-ai
+cd PlanForm.AI
 ```
 
-**2. Install server dependencies**
+### 2. Install Backend Dependencies
 
 ```bash
-cd server && npm install
+cd server
+npm install
 ```
 
-**3. Install client dependencies**
+### 3. Install Frontend Dependencies
 
 ```bash
-cd ../client && npm install
+cd ../client
+npm install
 ```
 
-**4. Install Python CV service dependencies**
+### 4. Install Computer Vision Dependencies
 
 ```bash
 cd ../cv-service
 pip install -r requirements.txt
 ```
 
-### Running the Services
+### 5. Configure Environment Variables
 
-Open three terminals and run each service:
-
-```bash
-# Terminal 1 — CV service (port 8000)
-cd cv-service
-uvicorn app:app --reload --port 8000
-
-# Terminal 2 — Node API server (port 5000)
-cd server
-npm run dev
-
-# Terminal 3 — React frontend (port 5173)
-cd client
-npm run dev
-```
-
-Then open [http://localhost:5173](http://localhost:5173).
-
----
-
-## Environment Variables
-
-Create `server/.env`:
+Create a `.env` file inside the `server/` directory:
 
 ```env
-GROQ_API_KEY=your_groq_api_key_here
+GROQ_API_KEY=your_groq_api_key
 PORT=5000
 ```
 
-Create `client/.env` (populated automatically after contract deployment):
+Create a `.env` file inside the `client/` directory:
 
 ```env
 VITE_CONTRACT_ID=your_soroban_contract_id
 VITE_STELLAR_NETWORK=testnet
 ```
 
+### 6. Run the Application
+
+Start all three services in separate terminal windows.
+
+**Terminal 1 – Computer Vision Service**
+
+```bash
+cd cv-service
+uvicorn app:app --reload --port 8000
+```
+
+**Terminal 2 – Backend API**
+
+```bash
+cd server
+npm run dev
+```
+
+**Terminal 3 – Frontend**
+
+```bash
+cd client
+npm run dev
+```
+
+Open the application in your browser:
+
+```text
+http://localhost:5173
+```
+
 ---
 
-## Pipeline Overview
+## ⚙️ How the Analysis Pipeline Works
 
-When a floor plan is uploaded the following steps run in sequence:
+PlanForm.AI processes an uploaded blueprint through a sequence of computer vision, geometric reasoning, structural classification, and AI-powered analysis stages.
 
-1. **Upload** — Multer saves the image; Node forwards it to the CV service.
-2. **CV Parsing** — OpenCV thresholds the image, estimates wall thickness, separates thick (wall) and thin (annotation) layers, runs Hough line detection, merges parallel edge pairs into centerlines, and snaps junctions.
-3. **Symbol Detection** — Door arcs are found from quarter-circle connected components; windows from hollow-box contours or parallel thin-line pairs.
-4. **Gap Classification** — Raw wall gaps are labelled `door`, `window`, or `opening` using proximity to detected symbols and outer-band heuristics.
-5. **Graph Construction** — Wall segments become graph edges carrying stable `wall_id` strings (e.g. `W-03`).
-6. **Structural Classification** — Server converts pixel span to metres and assigns element types: `partition_wall`, `load_bearing_wall`, `long_span`, `beam`, `slab`, `column`.
-7. **Material Scoring** — Each element type selects candidates from `data/materials.json` and ranks them using weighted scores across cost, strength, durability, and thermal efficiency.
-8. **AI Explanation** — Groq generates a plain-English summary covering project overview, element-wise rationale, and key trade-offs.
-9. **Response** — Everything is returned to the React client for rendering.
+**1. Blueprint Upload**
+
+The user uploads an architectural floor plan through the React interface. Multer handles the image upload, and the Node.js backend forwards it to the Python CV service.
+
+**2. Image Preprocessing & Wall Extraction**
+
+OpenCV processes the image using thresholding and image segmentation techniques. It estimates wall thickness, separates structural lines from annotations, and applies Hough Line Detection to identify wall boundaries.
+
+**3. Door & Window Recognition**
+
+Geometric features and connected components are used to detect door arcs, window symbols, and other architectural openings.
+
+**4. Gap Classification**
+
+Detected wall discontinuities are analyzed using proximity to architectural symbols and geometric heuristics to classify gaps as doors, windows, or general openings.
+
+**5. Graph-Based Spatial Modeling**
+
+Detected wall segments are represented as graph edges with stable identifiers such as `W-03`. This enables spatial relationship analysis and consistent element tracking.
+
+**6. Structural Classification**
+
+The backend estimates physical dimensions by converting pixel measurements into metres and classifies structural elements into categories such as:
+
+- Partition walls
+- Load-bearing walls
+- Long-span elements
+- Beams
+- Slabs
+- Columns
+
+**7. Material Recommendation Engine**
+
+A scoring engine evaluates candidates from the construction material catalog using weighted parameters such as:
+
+- Material cost
+- Structural strength
+- Durability
+- Thermal efficiency
+- Span suitability
+
+The system ranks materials according to their suitability for each classified structural element.
+
+**8. AI-Generated Engineering Explanations**
+
+Groq-powered LLMs generate natural-language explanations covering project insights, material selection rationale, and important engineering trade-offs.
+
+**9. Results & Visualization**
+
+The frontend presents the processed layout, interactive 3D reconstruction, material recommendations, coordinate overlays, and AI-generated explanations.
 
 ---
 
-## Blockchain Integration
+## ⛓️ Blockchain Integration
 
-Registering a blueprint on Stellar:
+PlanForm.AI integrates **Stellar Testnet and Soroban smart contracts** to provide an immutable record of analyzed blueprints.
 
-1. Connect your **Freighter** wallet (must be set to Testnet).
-2. If your balance is below 1 XLM, click **Fund (Testnet)** to use Friendbot.
-3. Click **Store Blueprint on Blockchain** — the app hashes the material recommendations (SHA-256) and calls `register_blueprint` on the Soroban contract.
-4. After confirmation you receive a **blueprint ID** and a link to the Stellar block explorer.
+### Registration Workflow
 
-The contract stores: project name, owner address, cost estimate, materials hash, room count, total area, and timestamp.
+1. Connect a Freighter wallet configured for Stellar Testnet.
+2. Fund the wallet using Friendbot if the account requires testnet XLM.
+3. Select **Store Blueprint on Blockchain**.
+4. The application generates a SHA-256 hash of the material recommendations.
+5. The hash and associated project metadata are submitted to the Soroban smart contract.
+6. After successful confirmation, the application provides a blueprint ID and Stellar block explorer reference.
+
+### On-Chain Information
+
+The smart contract stores:
+
+- Project name
+- Owner wallet address
+- Cost estimate
+- Materials hash
+- Room count
+- Total floor area
+- Registration timestamp
+
+This provides a verifiable record of the registered analysis.
 
 ---
 
-## Smart Contract Deployment
+## 🔗 Smart Contract Deployment
+
+The project includes deployment scripts for both Linux/macOS and Windows.
 
 **Linux / macOS**
 
@@ -246,48 +364,66 @@ chmod +x deploy-contract.sh
 .\deploy-contract.ps1
 ```
 
-Both scripts will:
+The deployment scripts automate the following operations:
 
-- Build the Rust contract to WASM
-- Create a `deployer` Stellar identity if one does not exist
-- Fund the account via Friendbot
-- Deploy the contract to Testnet
-- Write `VITE_CONTRACT_ID=...` to `client/.env`
-- Call `initialize` on the deployed contract
+1. Compile the Rust smart contract into WebAssembly (WASM).
+2. Create a Stellar deployer identity if one does not already exist.
+3. Fund the deployer account using Friendbot.
+4. Deploy the contract to Stellar Testnet.
+5. Configure the contract ID in `client/.env`.
+6. Initialize the deployed contract.
 
 ---
 
-## API Reference
+## 📡 API Reference
 
-### `POST /api/pipeline/analyze`
+### 1. Analyze Floor Plan
 
-Accepts a `multipart/form-data` request with a `floorPlan` image file.
+`POST /api/pipeline/analyze`
 
-**Response**
+Accepts a `multipart/form-data` request containing the uploaded floor plan.
+
+**Request:**
+
+| Parameter | Type | Description |
+|---|---|---|
+| `floorPlan` | File | Architectural floor plan image |
+
+**Sample Response:**
 
 ```json
 {
   "success": true,
-  "parsedLayout": { "walls": 28, "rooms": 7, "wallSegments": [...], ... },
-  "structuralElements": [...],
-  "recommendations": [...],
+  "parsedLayout": {
+    "walls": 28,
+    "rooms": 7,
+    "wallSegments": []
+  },
+  "structuralElements": [],
+  "recommendations": [],
   "aiExplanation": "..."
 }
 ```
 
-### `POST /api/pipeline/chat`
+### 2. AI Engineering Chat
+
+`POST /api/pipeline/chat`
+
+Accepts a JSON request containing a user question and the existing analysis context.
+
+**Sample Request:**
 
 ```json
 {
   "message": "Why was RCC chosen for the load-bearing walls?",
   "aiExplanation": "...",
-  "recommendations": [...],
-  "parsedLayout": { ... },
-  "chatHistory": [...]
+  "recommendations": [],
+  "parsedLayout": {},
+  "chatHistory": []
 }
 ```
 
-**Response**
+**Sample Response:**
 
 ```json
 {
@@ -295,3 +431,25 @@ Accepts a `multipart/form-data` request with a `floorPlan` image file.
   "reply": "RCC was selected because..."
 }
 ```
+
+---
+
+## 🔮 Future Scope
+
+Potential directions for extending PlanForm.AI include:
+
+- Improved detection accuracy for complex and low-resolution architectural drawings.
+- More advanced structural analysis and load estimation.
+- Support for additional blueprint formats and multi-floor buildings.
+- Enhanced material recommendations using regional pricing and availability.
+- Integration with additional blockchain networks.
+- Exportable engineering reports and detailed 3D model formats.
+
+---
+
+## 👨‍💻 Project
+
+**PlanForm.AI** — Combining Computer Vision, Artificial Intelligence, 3D Modeling, and Blockchain to make structural intelligence more accessible.
+
+[▶️ Watch Demo](https://lnkd.in/p/dkbwS-jU)
+
